@@ -77,6 +77,70 @@ namespace GomokuAI
             return ballsNextPosition;
         }
 
+        public static Point GetNextTurnIfLeftDiagonalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
+        {
+            Point ballsNextPosition = Point.Empty;
+
+            for (int diagonalOffset = 1 - gameFieldSize; diagonalOffset < gameFieldSize; diagonalOffset++)
+            {
+                int comboPointCount = 0;
+
+                for (int i = 1; i <= gameFieldSize - Math.Abs(diagonalOffset); i++)
+                {
+                    if (diagonalOffset >= 0)
+                    {
+                        if (gameField[i + diagonalOffset, i] == playerNumber)
+                        {
+                            comboPointCount++;
+
+                            if (comboPointCount == 4)
+                            {
+                                if (i - 4 > 0 && gameField[i + diagonalOffset - 4, i - 4] == 0)
+                                {
+                                    ballsNextPosition.X = i + diagonalOffset - 4;
+                                    ballsNextPosition.Y = i - 4;
+                                }
+
+                                if (i + diagonalOffset + 1 <= gameFieldSize && gameField[i + diagonalOffset + 1, i + 1] == 0)
+                                {
+                                    ballsNextPosition.X = i + diagonalOffset + 1;
+                                    ballsNextPosition.Y = i + 1;
+                                }
+                            }
+                        }
+                        else
+                            comboPointCount = 0;
+                    }
+                    else
+                    {
+                        if (gameField[i, i + Math.Abs(diagonalOffset)] == playerNumber)
+                        {
+                            comboPointCount++;
+
+                            if (comboPointCount == 4)
+                            {
+                                if (i - 4 > 0 && gameField[i - 4, i + Math.Abs(diagonalOffset) - 4] == 0)
+                                {
+                                    ballsNextPosition.X = i - 4;
+                                    ballsNextPosition.Y = i + Math.Abs(diagonalOffset) - 4;
+                                }
+
+                                if (i + diagonalOffset + 1 <= gameFieldSize && gameField[i + 1, i + Math.Abs(diagonalOffset) + 1] == 0)
+                                {
+                                    ballsNextPosition.X = i  + 1;
+                                    ballsNextPosition.Y = i + Math.Abs(diagonalOffset) + 1;
+                                }
+                            }
+                        }
+                        else
+                            comboPointCount = 0;
+                    }
+                }
+            }
+
+            return ballsNextPosition;
+        }
+
         public static void Main()
         {
             Random random = new Random();

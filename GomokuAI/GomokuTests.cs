@@ -82,5 +82,43 @@ namespace GomokuAI
 
             Assert.That(result, Is.EqualTo(nextTurn));
         }
+
+        [Test]
+        public void TestLeftDiagonalOpenFourBlockedBottom()
+        {
+            int playerNumber = 1,
+                gameFieldSize = 15;
+            int[,] gameField = new int[100, 100];
+
+            gameField[11, 10] = 0;
+            gameField[12, 11] = playerNumber;
+            gameField[13, 12] = playerNumber;
+            gameField[14, 13] = playerNumber;
+            gameField[15, 14] = playerNumber;
+
+            Point result = new Point(11, 10);
+            Point nextTurn = GetNextTurnIfLeftDiagonalOpenFour(gameField, gameFieldSize, playerNumber);
+
+            Assert.That(result, Is.EqualTo(nextTurn));
+        }
+
+        [Test]
+        public void TestLeftDiagonalOpenFourBlockedTop()
+        {
+            int playerNumber = 1,
+                gameFieldSize = 15;
+            int[,] gameField = new int[100, 100];
+
+            gameField[2, 1] = playerNumber;
+            gameField[3, 2] = playerNumber;
+            gameField[4, 3] = playerNumber;
+            gameField[5, 4] = playerNumber;
+            gameField[6, 5] = 0;
+
+            Point result = new Point(6, 5);
+            Point nextTurn = GetNextTurnIfLeftDiagonalOpenFour(gameField, gameFieldSize, playerNumber);
+
+            Assert.That(result, Is.EqualTo(nextTurn));
+        }
     }
 }

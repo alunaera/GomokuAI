@@ -5,9 +5,10 @@ namespace GomokuAI
 {
     class Program
     {
-        public static Point GetNextTurnIfVerticalOpenFour(Point ballsNextPosition, int[,] gameField, int gameFieldSize,
-            int playerNumber)
+        public static Point GetNextTurnIfVerticalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
         {
+            Point ballsNextPosition = Point.Empty;
+
             for (int i = 1; i <= gameFieldSize; ++i)
             {
                 int comboPointCount = 0;
@@ -29,6 +30,42 @@ namespace GomokuAI
                             {
                                 ballsNextPosition.X = i;
                                 ballsNextPosition.Y = j + 1;
+                            }
+                        }
+                    }
+                    else
+                        comboPointCount = 0;
+                }
+            }
+
+            return ballsNextPosition;
+        }
+
+        public static Point GetNextTurnIfHorizontalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
+        {
+            Point ballsNextPosition = Point.Empty;
+
+            for (int j = 1; j <= gameFieldSize; ++j)
+            {
+                int comboPointCount = 0;
+                for (int i = 1; i <= gameFieldSize; ++i)
+                {
+                    if (gameField[i, j] == playerNumber)
+                    {
+                        comboPointCount++;
+
+                        if (comboPointCount == 4)
+                        {
+                            if (i - 4 > 0 && gameField[i - 4, j] == 0)
+                            {
+                                ballsNextPosition.X = i - 4;
+                                ballsNextPosition.Y = j;
+                            }
+
+                            if (i + 1 <= gameFieldSize && gameField[i + 1, j] == 0)
+                            {
+                                ballsNextPosition.X = i + 1;
+                                ballsNextPosition.Y = j;
                             }
                         }
                     }
@@ -62,25 +99,10 @@ namespace GomokuAI
                     }
                 }
 
-                ballsNextPosition = GetNextTurnIfVerticalOpenFour(ballsNextPosition, map, n, player);
+                ballsNextPosition = GetNextTurnIfVerticalOpenFour(map, n, player);
 
-                //for (int j = 1; j <= n; j++)
-                //{
-                //    int comboPointCount = 0;
-                //    for (int i = 1; i <= n; i++)
-                //    {
-                //        if (comboPointCount == 4 && i < 15 && map[i, j] == 0)
-                //        {
-                //            ballsNextPosition.X = i;
-                //            ballsNextPosition.Y = j;
-                //        }
-
-                //        if (map[i, j] == player)
-                //            comboPointCount++;
-                //        else
-                //            comboPointCount = 0;
-                //    }
-                //}
+                if (ballsNextPosition == Point.Empty)
+                    ballsNextPosition = GetNextTurnIfHorizontalOpenFour(map, n, player);
 
                 if (ballsNextPosition == Point.Empty)
                 {

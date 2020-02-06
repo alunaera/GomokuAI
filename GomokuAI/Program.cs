@@ -5,135 +5,60 @@ namespace GomokuAI
 {
     class Program
     {
-        public static Point GetNextTurnIfVerticalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber)
         {
             Point ballsNextPosition = Point.Empty;
-
-            for (int i = 1; i <= gameFieldSize; ++i)
+            for (int i = 1; i <= gameFieldSize; i++)
             {
-                int comboPointCount = 0;
-                for (int j = 1; j <= gameFieldSize; ++j)
+                for (int j = 1; j <= gameFieldSize; j++)
                 {
-                    if (gameField[i, j] == playerNumber)
+                    int horizontalComboPoint = 0;
+                    int verticalComboPoint = 0;
+                    int leftDiagonalComboPoint = 0;
+                    int rightDiagonalComboPoint = 0;
+
+                    if (gameField[i, j] != 0)
+                        continue;
+
+                    for (int offset = -4; offset <= 4; offset++)
                     {
-                        comboPointCount++;
+                        if (offset == 0)
+                            continue;
 
-                        if (comboPointCount == 4)
-                        {
-                            if (j - 4 > 0 && gameField[i, j - 4] == 0)
-                            {
-                                ballsNextPosition.X = i;
-                                ballsNextPosition.Y = j - 4;
-                            }
-
-                            if (j + 1 <= gameFieldSize && gameField[i, j + 1] == 0)
-                            {
-                                ballsNextPosition.X = i;
-                                ballsNextPosition.Y = j + 1;
-                            }
-                        }
-                    }
-                    else
-                        comboPointCount = 0;
-                }
-            }
-
-            return ballsNextPosition;
-        }
-
-        public static Point GetNextTurnIfHorizontalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
-        {
-            Point ballsNextPosition = Point.Empty;
-
-            for (int j = 1; j <= gameFieldSize; ++j)
-            {
-                int comboPointCount = 0;
-                for (int i = 1; i <= gameFieldSize; ++i)
-                {
-                    if (gameField[i, j] == playerNumber)
-                    {
-                        comboPointCount++;
-
-                        if (comboPointCount == 4)
-                        {
-                            if (i - 4 > 0 && gameField[i - 4, j] == 0)
-                            {
-                                ballsNextPosition.X = i - 4;
-                                ballsNextPosition.Y = j;
-                            }
-
-                            if (i + 1 <= gameFieldSize && gameField[i + 1, j] == 0)
-                            {
-                                ballsNextPosition.X = i + 1;
-                                ballsNextPosition.Y = j;
-                            }
-                        }
-                    }
-                    else
-                        comboPointCount = 0;
-                }
-            }
-
-            return ballsNextPosition;
-        }
-
-        public static Point GetNextTurnIfLeftDiagonalOpenFour(int[,] gameField, int gameFieldSize, int playerNumber)
-        {
-            Point ballsNextPosition = Point.Empty;
-
-            for (int diagonalOffset = 1 - gameFieldSize; diagonalOffset < gameFieldSize; diagonalOffset++)
-            {
-                int comboPointCount = 0;
-
-                for (int i = 1; i <= gameFieldSize - Math.Abs(diagonalOffset); i++)
-                {
-                    if (diagonalOffset >= 0)
-                    {
-                        if (gameField[i + diagonalOffset, i] == playerNumber)
-                        {
-                            comboPointCount++;
-
-                            if (comboPointCount == 4)
-                            {
-                                if (i - 4 > 0 && gameField[i + diagonalOffset - 4, i - 4] == 0)
-                                {
-                                    ballsNextPosition.X = i + diagonalOffset - 4;
-                                    ballsNextPosition.Y = i - 4;
-                                }
-
-                                if (i + diagonalOffset + 1 <= gameFieldSize && gameField[i + diagonalOffset + 1, i + 1] == 0)
-                                {
-                                    ballsNextPosition.X = i + diagonalOffset + 1;
-                                    ballsNextPosition.Y = i + 1;
-                                }
-                            }
-                        }
+                        if (i + offset >= 1 && i + offset <= gameFieldSize &&
+                            gameField[i + offset, j] == playerNumber)
+                            horizontalComboPoint++;
                         else
-                            comboPointCount = 0;
-                    }
-                    else
-                    {
-                        if (gameField[i, i + Math.Abs(diagonalOffset)] == playerNumber)
-                        {
-                            comboPointCount++;
+                            horizontalComboPoint = 0;
 
-                            if (comboPointCount == 4)
-                            {
-                                if (i - 4 > 0 && gameField[i - 4, i + Math.Abs(diagonalOffset) - 4] == 0)
-                                {
-                                    ballsNextPosition.X = i - 4;
-                                    ballsNextPosition.Y = i + Math.Abs(diagonalOffset) - 4;
-                                }
-
-                                if (i + diagonalOffset + 1 <= gameFieldSize && gameField[i + 1, i + Math.Abs(diagonalOffset) + 1] == 0)
-                                {
-                                    ballsNextPosition.X = i  + 1;
-                                    ballsNextPosition.Y = i + Math.Abs(diagonalOffset) + 1;
-                                }
-                            }
-                        }
+                        if (j + offset >= 1 && j + offset <= gameFieldSize &&
+                            gameField[i, j + offset] == playerNumber)
+                            verticalComboPoint++;
                         else
-                            comboPointCount = 0;
+                            verticalComboPoint = 0;
+
+                        if (i + offset >= 1 && i + offset <= gameFieldSize &&
+                            j + offset >= 1 && j + offset <= gameFieldSize &&
+                            gameField[i + offset, j + offset] == playerNumber)
+                            leftDiagonalComboPoint++;
+                        else
+                            leftDiagonalComboPoint = 0;
+
+                        if (i + offset >= 1 && i + offset <= gameFieldSize &&
+                            j - offset >= 1 && j - offset <= gameFieldSize &&
+                            gameField[i + offset, j - offset] == playerNumber)
+                            rightDiagonalComboPoint++;
+                        else
+                            rightDiagonalComboPoint = 0;
+
+                        if (horizontalComboPoint == 4 || verticalComboPoint == 4 ||
+                            leftDiagonalComboPoint == 4 || rightDiagonalComboPoint == 4)
+                        {
+                            ballsNextPosition.X = i;
+                            ballsNextPosition.Y = j;
+
+                            break;
+                        }
                     }
                 }
             }
@@ -163,10 +88,7 @@ namespace GomokuAI
                     }
                 }
 
-                ballsNextPosition = GetNextTurnIfVerticalOpenFour(map, n, player);
-
-                if (ballsNextPosition == Point.Empty)
-                    ballsNextPosition = GetNextTurnIfHorizontalOpenFour(map, n, player);
+                ballsNextPosition = GetNextTurn(map, n, player);
 
                 if (ballsNextPosition == Point.Empty)
                 {

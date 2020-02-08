@@ -5,7 +5,7 @@ namespace GomokuAI
 {
     class Program
     {
-        public static Point GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber)
         {
             Point ballsNextPosition = Point.Empty;
             for (int i = 1; i <= gameFieldSize; i++)
@@ -88,7 +88,7 @@ namespace GomokuAI
                     }
                 }
 
-                ballsNextPosition = GetNextTurn(map, n, player);
+                ballsNextPosition = GetNextWinningTurn(map, n, player);
 
                 if (ballsNextPosition == Point.Empty)
                 {

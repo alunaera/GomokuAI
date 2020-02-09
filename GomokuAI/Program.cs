@@ -5,9 +5,9 @@ namespace GomokuAI
 {
     class Program
     {
-        public static Point GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point? GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber)
         {
-            Point ballsNextPosition = default;
+            Point? ballsNextPosition = null;
             for (int i = 1; i <= gameFieldSize; i++)
             {
                 for (int j = 1; j <= gameFieldSize; j++)
@@ -55,8 +55,7 @@ namespace GomokuAI
                             leftDiagonalComboPoint != 4 && rightDiagonalComboPoint != 4)
                             continue;
 
-                        ballsNextPosition.X = i;
-                        ballsNextPosition.Y = j;
+                        ballsNextPosition = new Point(i,j);
 
                         break;
                     }
@@ -66,9 +65,9 @@ namespace GomokuAI
             return ballsNextPosition;
         }
 
-        public static Point GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point? GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber)
         {
-            Point ballsNextPosition = default;
+            Point? ballsNextPosition = null;
             for (int i = 1; i <= gameFieldSize; i++)
                 for (int j = 1; j <= gameFieldSize; j++)
                 {
@@ -81,8 +80,7 @@ namespace GomokuAI
                     if (GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber) == default)
                         continue;
 
-                    ballsNextPosition.X = i;
-                    ballsNextPosition.Y = j;
+                    ballsNextPosition = new Point(i,j);
 
                     i = gameFieldSize + 1;
                     j = gameFieldSize + 1;
@@ -108,45 +106,39 @@ namespace GomokuAI
 
             while (true)
             {
-                int player, opponent, n;
+                int playerNumber, opponentNumber, gameFieldSize;
 
-                int[,] map = new int[100, 100];
+                int[,] gameField = new int[100, 100];
 
-                player = int.Parse(Console.ReadLine());
-                n = int.Parse(Console.ReadLine());
+                playerNumber = int.Parse(Console.ReadLine());
+                gameFieldSize = int.Parse(Console.ReadLine());
 
-                opponent = player == 1 ? 2 : 1;
+                opponentNumber = playerNumber == 1 ? 2 : 1;
 
 
-                for (int i = 1; i <= n; ++i)
+                for (int i = 1; i <= gameFieldSize; ++i)
                 {
-                    for (int j = 1; j <= n; ++j)
+                    for (int j = 1; j <= gameFieldSize; ++j)
                     {
-                        map[i, j] = int.Parse(Console.ReadLine());
+                        gameField[i, j] = int.Parse(Console.ReadLine());
                     }
                 }
 
-                Point ballsNextPosition = GetNextWinningTurn(map, n, player);
+                Point? ballsNextPosition = ((GetNextWinningTurn(gameField, gameFieldSize, playerNumber) ??
+                                             GetNextWinningTurn(gameField, gameFieldSize, opponentNumber)) ??
+                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber)) ??
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber);
 
-                if (ballsNextPosition == default)
-                    ballsNextPosition = GetNextWinningTurn(map, n, opponent);
-
-                if (ballsNextPosition == default)
-                    ballsNextPosition = GetNextTurnIfNotCanWin(map, n, player);
-
-                if (ballsNextPosition == default)
-                    ballsNextPosition = GetNextTurnIfNotCanWin(map, n, opponent);
-
-                if (ballsNextPosition == default)
+                if (!ballsNextPosition.HasValue)
                 {
                     do
                     {
-                        ballsNextPosition.X = random.Next(4, 11);
-                        ballsNextPosition.Y = random.Next(4, 11);
-                    } while (map[ballsNextPosition.X, ballsNextPosition.Y] != 0);
+                        ballsNextPosition = new Point(random.Next(4, 11), random.Next(4, 11));
+                    } 
+                    while (gameField[ballsNextPosition.Value.X, ballsNextPosition.Value.Y] != 0);
                 }
 
-                Console.WriteLine("{0}:{1}", ballsNextPosition.X, ballsNextPosition.Y);
+                Console.WriteLine("{0}:{1}", ballsNextPosition.Value.X, ballsNextPosition.Value.Y);
             }
         }
     }

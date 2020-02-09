@@ -21,7 +21,7 @@ namespace GomokuAI
             gameField[fourthPoint.X, fourthPoint.Y] = playerNumber;
             gameField[resultPoint.X, resultPoint.Y] = 0;
 
-            Point nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber);
+            Point? nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber);
 
              Assert.That(resultPoint, Is.EqualTo(nextTurn));
         }

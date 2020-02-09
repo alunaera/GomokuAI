@@ -7,7 +7,7 @@ namespace GomokuAI
     {
         public static Point GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber)
         {
-            Point ballsNextPosition = Point.Empty;
+            Point ballsNextPosition = default;
             for (int i = 1; i <= gameFieldSize; i++)
             {
                 for (int j = 1; j <= gameFieldSize; j++)
@@ -51,19 +51,55 @@ namespace GomokuAI
                         else
                             rightDiagonalComboPoint = 0;
 
-                        if (horizontalComboPoint == 4 || verticalComboPoint == 4 ||
-                            leftDiagonalComboPoint == 4 || rightDiagonalComboPoint == 4)
-                        {
-                            ballsNextPosition.X = i;
-                            ballsNextPosition.Y = j;
+                        if (horizontalComboPoint != 4 && verticalComboPoint != 4 && 
+                            leftDiagonalComboPoint != 4 && rightDiagonalComboPoint != 4)
+                            continue;
 
-                            break;
-                        }
+                        ballsNextPosition.X = i;
+                        ballsNextPosition.Y = j;
+
+                        break;
                     }
                 }
             }
 
             return ballsNextPosition;
+        }
+
+        public static Point GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber)
+        {
+            Point ballsNextPosition = default;
+            for (int i = 1; i <= gameFieldSize; i++)
+                for (int j = 1; j <= gameFieldSize; j++)
+                {
+                    int[,] supposedGameField = CopyArray(gameField, gameFieldSize);
+
+                    if (gameField[i, j] == 0)
+                        supposedGameField[i, j] = playerNumber;
+
+
+                    if (GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber) == default)
+                        continue;
+
+                    ballsNextPosition.X = i;
+                    ballsNextPosition.Y = j;
+
+                    i = gameFieldSize + 1;
+                    j = gameFieldSize + 1;
+                }
+
+            return ballsNextPosition;
+
+            int[,] CopyArray(int[,] sourceArray, int sourceArraySize)
+            {
+                int[,] destinationArray = new int[100, 100];
+
+                for (int i = 1; i <= sourceArraySize; i++)
+                    for (int j = 1; j <= sourceArraySize; j++)
+                        destinationArray[i, j] = sourceArray[i, j];
+
+                return destinationArray;
+            }
         }
 
         public static void Main()
@@ -72,13 +108,15 @@ namespace GomokuAI
 
             while (true)
             {
-                Point ballsNextPosition = Point.Empty;
-                int player, n;
+                int player, opponent, n;
 
                 int[,] map = new int[100, 100];
 
                 player = int.Parse(Console.ReadLine());
                 n = int.Parse(Console.ReadLine());
+
+                opponent = player == 1 ? 2 : 1;
+
 
                 for (int i = 1; i <= n; ++i)
                 {
@@ -88,9 +126,18 @@ namespace GomokuAI
                     }
                 }
 
-                ballsNextPosition = GetNextWinningTurn(map, n, player);
+                Point ballsNextPosition = GetNextWinningTurn(map, n, player);
 
-                if (ballsNextPosition == Point.Empty)
+                if (ballsNextPosition == default)
+                    ballsNextPosition = GetNextWinningTurn(map, n, opponent);
+
+                if (ballsNextPosition == default)
+                    ballsNextPosition = GetNextTurnIfNotCanWin(map, n, player);
+
+                if (ballsNextPosition == default)
+                    ballsNextPosition = GetNextTurnIfNotCanWin(map, n, opponent);
+
+                if (ballsNextPosition == default)
                 {
                     do
                     {

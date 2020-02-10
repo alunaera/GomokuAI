@@ -21,9 +21,9 @@ namespace GomokuAI
             gameField[fourthPoint.X, fourthPoint.Y] = playerNumber;
             gameField[resultPoint.X, resultPoint.Y] = 0;
 
-            Point? nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber);
+            Point? nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4);
 
-             Assert.That(resultPoint, Is.EqualTo(nextTurn));
+            Assert.That(resultPoint, Is.EqualTo(nextTurn));
         }
 
         private static readonly object[] PointCases =
@@ -39,7 +39,6 @@ namespace GomokuAI
             new[] {new Point(1, 1), new Point(2, 1), new Point(4, 1), new Point(5, 1), new Point(3, 1)},
             new[] {new Point(1, 1), new Point(2, 2), new Point(4, 4), new Point(5, 5), new Point(3, 3)},
             new[] {new Point(15, 1), new Point(14, 2), new Point(12, 4), new Point(11, 5), new Point(13, 3)}
-
         };
     }
 }

@@ -5,7 +5,7 @@ namespace GomokuAI
 {
     class Program
     {
-        public static Point? GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point? GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
         {
             Point? ballsNextPosition = null;
             for (int i = 1; i <= gameFieldSize; i++)
@@ -20,7 +20,7 @@ namespace GomokuAI
                     if (gameField[i, j] != 0)
                         continue;
 
-                    for (int offset = -4; offset <= 4; offset++)
+                    for (int offset = -searchOffset; offset <= searchOffset; offset++)
                     {
                         if (offset == 0)
                             continue;
@@ -51,11 +51,11 @@ namespace GomokuAI
                         else
                             rightDiagonalComboPoint = 0;
 
-                        if (horizontalComboPoint != 4 && verticalComboPoint != 4 && 
+                        if (horizontalComboPoint != 4 && verticalComboPoint != 4 &&
                             leftDiagonalComboPoint != 4 && rightDiagonalComboPoint != 4)
                             continue;
 
-                        ballsNextPosition = new Point(i,j);
+                        ballsNextPosition = new Point(i, j);
 
                         break;
                     }
@@ -65,7 +65,7 @@ namespace GomokuAI
             return ballsNextPosition;
         }
 
-        public static Point? GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber)
+        private static Point? GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
         {
             Point? ballsNextPosition = null;
             for (int i = 1; i <= gameFieldSize; i++)
@@ -75,15 +75,18 @@ namespace GomokuAI
 
                     if (gameField[i, j] == 0)
                         supposedGameField[i, j] = playerNumber;
-
-
-                    if (GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber) == default)
+                    else
                         continue;
 
-                    ballsNextPosition = new Point(i,j);
+                    if (!GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
+                        continue;
+
+                    ballsNextPosition =
+                        GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset);
 
                     i = gameFieldSize + 1;
                     j = gameFieldSize + 1;
+
                 }
 
             return ballsNextPosition;
@@ -124,10 +127,11 @@ namespace GomokuAI
                     }
                 }
 
-                Point? ballsNextPosition = ((GetNextWinningTurn(gameField, gameFieldSize, playerNumber) ??
-                                             GetNextWinningTurn(gameField, gameFieldSize, opponentNumber)) ??
-                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber)) ??
-                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber);
+                Point? ballsNextPosition = (((GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4) ??
+                                              GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4)) ??
+                                             GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3)) ??
+                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3)) ??
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2);
 
                 if (!ballsNextPosition.HasValue)
                 {

@@ -8,37 +8,36 @@ namespace GomokuAI
     internal class GomokuTests
     {
 
-        [Test, TestCaseSource(nameof(PointCases))]
-        public void TestGetNextWinningTurn(Point firstPoint, Point secondPoint, Point thirdPoint, Point fourthPoint, Point resultPoint)
+        [TestCase("1 1", "1 2", "1 3", "1 4", ExpectedResult = "1 5")]
+        [TestCase("1 1", "2 1", "3 1", "4 1", ExpectedResult = "5 1")]
+        [TestCase("12 1", "13 1", "14 1", "15 1", ExpectedResult = "11 1")]
+        [TestCase("12 11", "13 12", "14 13", "15 14", ExpectedResult = "11 10")]
+        [TestCase("2 1", "3 2", "4 3", "5 4", ExpectedResult = "6 5")]
+        [TestCase("14 1", "13 2", "12 3", "11 4", ExpectedResult = "10 5")]
+        [TestCase("13 12", "12 13", "11 14", "10 15", ExpectedResult = "14 11")]
+        [TestCase("1 1", "1 2", "1 4", "1 5", ExpectedResult = "1 3")]
+        [TestCase("1 1", "2 1", "4 1", "5 1", ExpectedResult = "3 1")]
+        [TestCase("1 1", "2 2", "3 3", "4 4", ExpectedResult = "5 5")]
+        [TestCase("15 1", "14 2", "12 4", "11 5", ExpectedResult = "13 3")]
+        public string TestGetNextWinningTurn(params string[] points)
         {
-            int playerNumber = 1,
-                gameFieldSize = 15;
-            int[,] gameField = new int[100, 100];
+            const int playerNumber = 1;
+            const int gameFieldSize = 15;
 
-            gameField[firstPoint.X, firstPoint.Y] = playerNumber;
-            gameField[secondPoint.X, secondPoint.Y] = playerNumber;
-            gameField[thirdPoint.X, thirdPoint.Y] = playerNumber;
-            gameField[fourthPoint.X, fourthPoint.Y] = playerNumber;
-            gameField[resultPoint.X, resultPoint.Y] = 0;
+            int[,] gameField = new int[gameFieldSize + 1, gameFieldSize + 1];
+
+            foreach (string point in points)
+            {
+                string[] s = point.Split();
+
+                gameField[int.Parse(s[0]), int.Parse(s[1])] = playerNumber;
+            }
 
             Point? nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4);
 
-            Assert.That(resultPoint, Is.EqualTo(nextTurn));
+            return nextTurn.HasValue
+                ? $"{nextTurn.Value.X} {nextTurn.Value.Y}"
+                : "";
         }
-
-        private static readonly object[] PointCases =
-        {
-            new[] {new Point(1, 1), new Point(1, 2), new Point(1, 3), new Point(1, 4), new Point(1, 5)},
-            new[] {new Point(1, 1), new Point(2, 1), new Point(3, 1), new Point(4, 1), new Point(5, 1)},
-            new[] {new Point(12, 1), new Point(13, 1), new Point(14, 1), new Point(15, 1), new Point(11, 1)},
-            new[] {new Point(12, 11), new Point(13, 12), new Point(14, 13), new Point(15, 14), new Point(11, 10)},
-            new[] {new Point(2, 1), new Point(3, 2), new Point(4, 3), new Point(5, 4), new Point(6, 5)},
-            new[] {new Point(14, 1), new Point(13, 2), new Point(12, 3), new Point(11, 4), new Point(10, 5)},
-            new[] {new Point(13, 12), new Point(12, 13), new Point(11, 14), new Point(10, 15), new Point(14, 11)},
-            new[] {new Point(1, 1), new Point(1, 2), new Point(1, 4), new Point(1, 5), new Point(1, 3)},
-            new[] {new Point(1, 1), new Point(2, 1), new Point(4, 1), new Point(5, 1), new Point(3, 1)},
-            new[] {new Point(1, 1), new Point(2, 2), new Point(4, 4), new Point(5, 5), new Point(3, 3)},
-            new[] {new Point(15, 1), new Point(14, 2), new Point(12, 4), new Point(11, 5), new Point(13, 3)}
-        };
     }
 }

@@ -51,8 +51,8 @@ namespace GomokuAI
                         else
                             rightDiagonalComboPoint = 0;
 
-                        if (horizontalComboPoint != 4 && verticalComboPoint != 4 &&
-                            leftDiagonalComboPoint != 4 && rightDiagonalComboPoint != 4)
+                        if (horizontalComboPoint != searchOffset && verticalComboPoint != searchOffset &&
+                            leftDiagonalComboPoint != searchOffset && rightDiagonalComboPoint != searchOffset)
                             continue;
 
                         ballsNextPosition = new Point(i, j);
@@ -127,11 +127,12 @@ namespace GomokuAI
                     }
                 }
 
-                Point? ballsNextPosition = (((GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4) ??
-                                              GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4)) ??
-                                             GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3)) ??
-                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3)) ??
-                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2);
+                Point? ballsNextPosition = ((((GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4) ??
+                                               GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4)) ??
+                                              GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3)) ??
+                                             GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3)) ??
+                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2)) ??
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 1);
 
                 if (!ballsNextPosition.HasValue)
                 {

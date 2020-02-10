@@ -132,7 +132,7 @@ namespace GomokuAI
                                               GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3)) ??
                                              GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3)) ??
                                             GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2)) ??
-                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 1);
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 2);
 
                 if (!ballsNextPosition.HasValue)
                 {

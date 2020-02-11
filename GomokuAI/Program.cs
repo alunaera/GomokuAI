@@ -85,12 +85,9 @@ namespace GomokuAI
                     ballsNextPosition =
                         GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset);
 
-                    if (gameField[ballsNextPosition.Value.X, ballsNextPosition.Value.Y] == 0)
-                        supposedGameField[ballsNextPosition.Value.X, ballsNextPosition.Value.Y] = playerNumber;
-                    else
-                        continue;
+                    supposedGameField[ballsNextPosition.Value.X, ballsNextPosition.Value.Y] = playerNumber;
 
-                    if (!GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
+                    if (!GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset + 1).HasValue)
                         continue;
 
                     i = gameFieldSize + 1;

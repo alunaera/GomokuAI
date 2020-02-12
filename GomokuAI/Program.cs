@@ -122,11 +122,8 @@ namespace GomokuAI
                         ? 2
                         : 1;
 
-                    if (!GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
-                        continue;
-
-                    i = gameFieldSize + 1;
-                    j = gameFieldSize + 1;
+                    if (GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
+                        return GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset);
 
                 }
 

@@ -78,6 +78,7 @@ namespace GomokuAI
             for (int x = 1; x <= gameFieldSize; x++)
                 for (int y = 1; y <= gameFieldSize; y++)
                 {
+
                     if (gameField[x, y] == 0)
                         continue;
 
@@ -102,8 +103,8 @@ namespace GomokuAI
                             : y;
                 }
 
-            for (int i = minY; i <= maxY; i++)
-                for (int j = minX; j <= maxX; j++)
+            for (int i = minX; i <= maxX; i++)
+                for (int j = minY; j <= maxY; j++)
                 {
                     int[,] supposedGameField = CopyArray(gameField, gameFieldSize);
 
@@ -115,15 +116,15 @@ namespace GomokuAI
                     if (!GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
                         continue;
 
-                    ballsNextPosition =
-                        GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset);
+                    ballsNextPosition = new Point(i, j);
 
-                    supposedGameField[ballsNextPosition.Value.X, ballsNextPosition.Value.Y] = playerNumber == 1 
+                    supposedGameField[i, j] = playerNumber == 1
                         ? 2
                         : 1;
 
                     if (GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset).HasValue)
                         return GetNextWinningTurn(supposedGameField, gameFieldSize, playerNumber, searchOffset);
+
 
                 }
 
@@ -167,10 +168,10 @@ namespace GomokuAI
 
                 Point? ballsNextPosition = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4) ??
                                            GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4) ??
-                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3) ??
                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3) ??
-                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2) ??
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3) ??
                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 2) ??
+                                           GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2) ??
                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 1) ??
                                            GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 1) ??
                                            new Point(7, 7);

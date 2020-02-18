@@ -86,24 +86,16 @@ namespace GomokuAI
                         continue;
 
                     if (x < minX)
-                        minX = x > 1
-                            ? x - 1
-                            : x;
+                        minX = x > 1 ? x - 1 : x;
 
                     if (y < minY)
-                        minY = y > 1
-                            ? y - 1
-                            : y;
+                        minY = y > 1 ? y - 1 : y;
 
                     if (x > maxX)
-                        maxX = x < 15
-                            ? x + 1
-                            : x;
+                        maxX = x < gameFieldSize ? x + 1 : x;
 
                     if (y > maxY)
-                        maxY = y < 15
-                            ? y + 1
-                            : y;
+                        maxY = y < gameFieldSize ? y + 1 : y;
                 }
             }
 

@@ -68,10 +68,13 @@ namespace GomokuAI
             return winningPointsList.ToArray();
         }
 
-        private static Point? GetNextTurnIfNotCanWin(int[,] gameField, int gameFieldSize, int playerNumber,
+        private static Point? GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber,
             int searchOffset)
         {
-            List<Point> pointsList = new List<Point>();
+            if (searchOffset == 4 && GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length > 0)
+                return GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).First();
+
+            List<(Point point, int winningTurnsOpenCount)> pointsList = new List<(Point point, int x)>();
 
             int minX = 15;
             int minY = 15;
@@ -109,41 +112,25 @@ namespace GomokuAI
             for (int i = minX; i <= maxX; i++)
                 for (int j = minY; j <= maxY; j++)
                 {
-                    if (gameField[i, j] == 0)
-                        gameField[i, j] = playerNumber;
-                    else
+                    if (gameField[i, j] != 0)
                         continue;
 
-                    if (GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length == 0)
+                    gameField[i, j] = playerNumber;
+
+                    if (GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length != 0)
                     {
+                        pointsList.Add((new Point(i, j),
+                            GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length));
                         gameField[i, j] = 0;
-                        continue;
                     }
-
-                    pointsList.Add(new Point(i, j));
-                    gameField[i, j] = 0;
+                    else
+                        gameField[i, j] = 0;
                 }
 
             if (pointsList.Count == 0)
                 return null;
 
-            Point? nextBallPosition = null;
-            int maxWinningTurns = 0;
-
-            foreach (Point point in pointsList)
-            {
-                gameField[point.X, point.Y] = playerNumber;
-
-                if (GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length > maxWinningTurns)
-                {
-                    nextBallPosition = point;
-                    maxWinningTurns = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length;
-                }
-
-                gameField[point.X, point.Y] = 0;
-            }
-
-            return nextBallPosition;
+            return pointsList.OrderBy(x => x.winningTurnsOpenCount).First().point;
         }
 
         public static void Main()
@@ -154,7 +141,6 @@ namespace GomokuAI
 
                 int playerNumber = int.Parse(Console.ReadLine());
                 int gameFieldSize = int.Parse(Console.ReadLine());
-                int opponentNumber = playerNumber == 1 ? 2 : 1;
 
                 for (int i = 1; i <= gameFieldSize; i++)
                 {
@@ -166,20 +152,23 @@ namespace GomokuAI
 
                 Point? ballsNextPosition = null;
 
-                if (GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4).Length > 0)
-                    ballsNextPosition = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4).First();
+                for (int searchOffset = 4; searchOffset >= 1; searchOffset--)
+                    for (int playerOffset = 0; playerOffset <= 1; playerOffset++)
+                    {
+                        int currentPlayer = (playerNumber + playerOffset - 1) % 2 + 1;
 
-                if (!ballsNextPosition.HasValue && GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4).Length > 0)
-                    ballsNextPosition = GetNextWinningTurn(gameField, gameFieldSize, opponentNumber, 4).First();
+                        ballsNextPosition = GetNextTurn(gameField, gameFieldSize, currentPlayer, searchOffset);
+
+                        if (!ballsNextPosition.HasValue)
+                            continue;
+
+                        searchOffset = 0;
+                        break;
+                    }
 
                 if (!ballsNextPosition.HasValue)
-                    ballsNextPosition = GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 3) ??
-                                        GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 3) ??
-                                        GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 2) ??
-                                        GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 2) ??
-                                        GetNextTurnIfNotCanWin(gameField, gameFieldSize, playerNumber, 1) ??
-                                        GetNextTurnIfNotCanWin(gameField, gameFieldSize, opponentNumber, 1) ??
-                                        new Point(7, 7);
+                    ballsNextPosition = new Point(7, 7);
+
 
                 Console.WriteLine("{0}:{1}", ballsNextPosition.Value.X, ballsNextPosition.Value.Y);
             }

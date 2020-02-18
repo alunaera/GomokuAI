@@ -69,10 +69,8 @@ namespace GomokuAI
 
         private static Point? GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
         {
-            Point[] nextWinningTurns = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset);
-
-            if (searchOffset == 4 && nextWinningTurns.Length > 0)
-                return nextWinningTurns.First();
+            if (searchOffset == 4 && GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset).Length > 0)
+                return GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset).First();
 
             int minX = gameFieldSize;
             int minY = gameFieldSize;
@@ -120,6 +118,8 @@ namespace GomokuAI
 
                     gameField[i, j] = playerNumber;
 
+                    Point[] nextWinningTurns = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset);
+
                     if (nextWinningTurns.Length != 0)
                         pointsList.Add((new Point(i, j), nextWinningTurns.Length));
 
@@ -142,10 +142,8 @@ namespace GomokuAI
 
                     Point? nextTurn = GetNextTurn(gameField, gameFieldSize, currentPlayer, searchOffset);
 
-                    if (!nextTurn.HasValue)
-                        continue;
-
-                    return nextTurn;
+                    if (nextTurn.HasValue)
+                        return nextTurn;
                 }
 
             return null;

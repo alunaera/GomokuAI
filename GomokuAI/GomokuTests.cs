@@ -34,7 +34,7 @@ namespace GomokuAI
                 gameField[int.Parse(s[0]), int.Parse(s[1])] = playerNumber;
             }
 
-            Point? nextTurn = GetNextWinningTurn(gameField, gameFieldSize, playerNumber, 4).First();
+            Point? nextTurn = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, 4).First();
 
             return nextTurn.HasValue
                 ? $"{nextTurn.Value.X} {nextTurn.Value.Y}"

@@ -7,7 +7,8 @@ namespace GomokuAI
 {
     internal class Program
     {
-        public static Point[] GetNextWinningTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
+        public static Point[] GetNextWinningTurns(int[,] gameField, int gameFieldSize, int playerNumber,
+            int searchOffset)
         {
             List<Point> winningPointsList = new List<Point>();
 
@@ -68,13 +69,13 @@ namespace GomokuAI
 
         private static Point? GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
         {
-            if (searchOffset == 4 && GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length > 0)
-                return GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).First();
+            Point[] nextWinningTurns = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset);
 
-            List<(Point point, int winningTurnsOpenCount)> pointsList = new List<(Point point, int x)>();
+            if (searchOffset == 4 && nextWinningTurns.Length > 0)
+                return nextWinningTurns.First();
 
-            int minX = 15;
-            int minY = 15;
+            int minX = gameFieldSize;
+            int minY = gameFieldSize;
             int maxX = 0;
             int maxY = 0;
 
@@ -108,6 +109,8 @@ namespace GomokuAI
                 }
             }
 
+            var pointsList = new List<(Point Point, int WinningTurnsOpenCount)>();
+
             for (int i = minX; i <= maxX; i++)
             {
                 for (int j = minY; j <= maxY; j++)
@@ -117,9 +120,8 @@ namespace GomokuAI
 
                     gameField[i, j] = playerNumber;
 
-                    if (GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length != 0)
-                        pointsList.Add((new Point(i, j),
-                            GetNextWinningTurn(gameField, gameFieldSize, playerNumber, searchOffset).Length));
+                    if (nextWinningTurns.Length != 0)
+                        pointsList.Add((new Point(i, j), nextWinningTurns.Length));
 
                     gameField[i, j] = 0;
                 }
@@ -128,7 +130,7 @@ namespace GomokuAI
             if (pointsList.Count == 0)
                 return null;
 
-            return pointsList.OrderByDescending(x => x.winningTurnsOpenCount).First().point;
+            return pointsList.OrderByDescending(x => x.WinningTurnsOpenCount).First().Point;
         }
 
         private static Point? GetBallNextPosition(int[,] gameField, int gameFieldSize, int playerNumber)
@@ -165,7 +167,7 @@ namespace GomokuAI
                     }
                 }
 
-                Point? ballsNextPosition = GetBallNextPosition(gameField, gameFieldSize, playerNumber) ?? 
+                Point? ballsNextPosition = GetBallNextPosition(gameField, gameFieldSize, playerNumber) ??
                                            new Point(7, 7);
 
                 Console.WriteLine("{0}:{1}", ballsNextPosition.Value.X, ballsNextPosition.Value.Y);

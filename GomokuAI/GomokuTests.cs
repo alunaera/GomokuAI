@@ -20,7 +20,7 @@ namespace GomokuAI
         [TestCase("13 12", "12 13", "11 14", "10 15", ExpectedResult = "14 11")]
         [TestCase("12 11", "13 12", "14 13", "15 14", ExpectedResult = "11 10")]
         
-        public string TestGetNextWinningTurn(params string[] points)
+        public string TestGetNextTurn(params string[] points)
         {
             const int playerNumber = 1;
             const int gameFieldSize = 15;
@@ -34,7 +34,7 @@ namespace GomokuAI
                 gameField[int.Parse(s[0]), int.Parse(s[1])] = playerNumber;
             }
 
-            Point? nextTurn = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, 4).First();
+            Point? nextTurn = GetNextTurn(gameField, gameFieldSize, playerNumber, 4);
 
             return nextTurn.HasValue
                 ? $"{nextTurn.Value.X} {nextTurn.Value.Y}"

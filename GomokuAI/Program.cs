@@ -67,14 +67,14 @@ namespace GomokuAI
             return winningPointsList.ToArray();
         }
 
-        private static Point? GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
+        public static Point? GetNextTurn(int[,] gameField, int gameFieldSize, int playerNumber, int searchOffset)
         {
             if (searchOffset == 4)
             {
                 Point[] nextWinningTurns = GetNextWinningTurns(gameField, gameFieldSize, playerNumber, searchOffset);
 
                 if (nextWinningTurns.Length > 0)
-                    return nextWinningTurns.First();
+                    return nextWinningTurns.OrderBy(_ => Guid.NewGuid()).Last();
             }
 
             int minX = gameFieldSize;
@@ -90,16 +90,16 @@ namespace GomokuAI
                     if (gameField[x, y] == 0)
                         continue;
 
-                    if (x < minX)
+                    if (x <= minX)
                         minX = x > 1 ? x - 1 : x;
 
-                    if (y < minY)
+                    if (y <= minY)
                         minY = y > 1 ? y - 1 : y;
 
-                    if (x > maxX)
+                    if (x >= maxX)
                         maxX = x < gameFieldSize ? x + 1 : x;
 
-                    if (y > maxY)
+                    if (y >= maxY)
                         maxY = y < gameFieldSize ? y + 1 : y;
                 }
             }
@@ -127,7 +127,10 @@ namespace GomokuAI
             if (pointsList.Count == 0)
                 return null;
 
-            return pointsList.OrderByDescending(x => x.WinningTurnsOpenCount).First().Point;
+            return pointsList.OrderByDescending(x => x.WinningTurnsOpenCount)
+                             .ThenBy(_ => Guid.NewGuid())
+                             .First()
+                             .Point;
         }
 
         private static Point GetBallNextPosition(int[,] gameField, int gameFieldSize, int playerNumber)
@@ -152,9 +155,10 @@ namespace GomokuAI
         {
             while (true)
             {
-                int[,] gameField = new int[100, 100];
+               
                 int playerNumber = int.Parse(Console.ReadLine());
                 int gameFieldSize = int.Parse(Console.ReadLine());
+                int[,] gameField = new int[gameFieldSize + 1, gameFieldSize + 1];
 
                 for (int i = 1; i <= gameFieldSize; i++)
                 {

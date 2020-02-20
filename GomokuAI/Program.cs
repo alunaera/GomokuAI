@@ -7,7 +7,7 @@ namespace GomokuAI
 {
     internal class Program
     {
-        public static Point[] GetNextWinningTurns(int[,] gameField, int gameFieldSize, int playerNumber,
+        private static Point[] GetNextWinningTurns(int[,] gameField, int gameFieldSize, int playerNumber,
             int searchOffset)
         {
             List<Point> winningPointsList = new List<Point>();
@@ -133,7 +133,7 @@ namespace GomokuAI
                              .Point;
         }
 
-        private static Point GetBallNextPosition(int[,] gameField, int gameFieldSize, int playerNumber)
+        public static Point GetBallNextPosition(int[,] gameField, int gameFieldSize, int playerNumber)
         {
             for (int searchOffset = 4; searchOffset >= 1; searchOffset--)
             {

@@ -1,5 +1,4 @@
 ﻿using System.Drawing;
-using System.Linq;
 using NUnit.Framework;
 using static GomokuAI.Program;
 
@@ -34,7 +33,7 @@ namespace GomokuAI
                 gameField[int.Parse(s[0]), int.Parse(s[1])] = playerNumber;
             }
 
-            Point? nextTurn = GetNextTurn(gameField, gameFieldSize, playerNumber, 4);
+            Point? nextTurn = GetBallNextPosition(gameField, gameFieldSize, playerNumber);
 
             return nextTurn.HasValue
                 ? $"{nextTurn.Value.X} {nextTurn.Value.Y}"

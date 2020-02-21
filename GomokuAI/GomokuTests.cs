@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 using NUnit.Framework;
 using static GomokuAI.Program;
 
@@ -33,7 +34,13 @@ namespace GomokuAI
                 gameField[int.Parse(s[0]), int.Parse(s[1])] = playerNumber;
             }
 
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
             Point? nextTurn = GetBallNextPosition(gameField, gameFieldSize, playerNumber);
+
+            stopwatch.Stop();
+
+            Assert.IsTrue(stopwatch.Elapsed.Milliseconds < 20);
 
             return nextTurn.HasValue
                 ? $"{nextTurn.Value.X} {nextTurn.Value.Y}"
